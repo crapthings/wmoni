@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Tray, nativeImage, ipcMain } = require('electron')
+const _ = require('lodash')
 const si = require('systeminformation')
 const pretty = require('prettysize')
 
@@ -35,7 +36,7 @@ app.on('activate', function () {
 function createCpuWindow() {
   cpuWindow = new BrowserWindow({
     width: 600 / 3,
-    height: 272,
+    height: 308,
     show: false,
     transparent: true,
     frame: false,
@@ -163,6 +164,8 @@ function registerIPC() {
     const cpu = await si.currentLoad()
     const mem = await si.mem()
     const disk = (await si.fsSize())[0]
+
+    cpu.temp = await si.cpuTemperature()
 
     cpuTray.setTitle(cpu.currentload.toFixed(1).toString() + '%')
     memTray.setTitle(pretty(mem.available, true, true, "0"))

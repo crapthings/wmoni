@@ -29,7 +29,7 @@ trayUpdate('disk', traySvg, [])
 
 setInterval(function () {
   ipc.send('ping', 'ping', 10)
-}, 2000)
+}, 5000)
 
 ipc.on('pong', function (event, args) {
   console.log(args)

@@ -36,9 +36,12 @@ ipc.on('pong', function (event, args) {
   svgUpdate([{ count: args.cpu.currentload }, { count: args.cpu.currentload_idle - args.cpu.currentload }])
   trayUpdate('cpu', traySvg, [{ count: args.cpu.currentload }, { count: args.cpu.currentload_idle - args.cpu.currentload }])
   const data = {
-    load: args.cpu.currentload.toFixed(1) + '%',
+    system: args.cpu.currentload_system.toFixed(1) + '%',
+    user: args.cpu.currentload_user.toFixed(1) + '%',
     idle: args.cpu.currentload_idle.toFixed(1) + '%',
+    temperature: args.cpu.temp.main.toFixed(1) + '°',
   }
+
   infoUpdate(data)
 })
 
