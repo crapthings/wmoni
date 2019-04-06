@@ -13,8 +13,6 @@
     "electron": "^4.1.4"
   },
   "dependencies": {
-    "canvg": "^1.5.3",
-    "chart.js": "^2.8.0",
     "d3": "^5.9.2",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
