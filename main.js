@@ -35,10 +35,11 @@ app.on('activate', function () {
 function createCpuWindow() {
   cpuWindow = new BrowserWindow({
     width: 600 / 3,
-    height: 600,
+    height: 272,
     show: false,
     transparent: true,
     frame: false,
+    useContentSize: true,
     webPreferences: {
       nodeIntegration: true,
       backgroundThrottling: false,
@@ -65,7 +66,7 @@ function createCpuWindow() {
 function createMemWindow() {
   memWindow = new BrowserWindow({
     width: 600 / 3,
-    height: 600,
+    height: 398,
     show: false,
     transparent: true,
     frame: false,
@@ -95,7 +96,7 @@ function createMemWindow() {
 function createDiskWindow() {
   diskWindow = new BrowserWindow({
     width: 600 / 3,
-    height: 600,
+    height: 344,
     show: false,
     transparent: true,
     frame: false,
