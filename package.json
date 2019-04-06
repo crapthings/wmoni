@@ -1,0 +1,26 @@
+{
+  "name": "wmoni",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^4.1.4"
+  },
+  "dependencies": {
+    "canvg": "^1.5.3",
+    "chart.js": "^2.8.0",
+    "d3": "^5.9.2",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "osx-temperature-sensor": "^1.0.3",
+    "prettysize": "^2.0.0",
+    "svg64": "^0.1.0",
+    "systeminformation": "^4.1.4"
+  }
+}
