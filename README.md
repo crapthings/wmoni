@@ -1,6 +1,6 @@
 # wmoni
 
-> a free alternative iStat menus
+> a free alternative to iStat menus
 
 ![logo](https://raw.githubusercontent.com/crapthings/wmoni/master/icon.png)
 
