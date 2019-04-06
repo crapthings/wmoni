@@ -32,7 +32,6 @@ setInterval(function () {
 }, 5000)
 
 ipc.on('pong', function (event, args) {
-  console.log(args)
   svgUpdate([{ count: args.disk.used }, { count: args.disk.size - args.disk.used }])
   trayUpdate('disk', traySvg, [{ count: args.disk.used }, { count: args.disk.size - args.disk.used }])
   infoUpdate(args.disk)

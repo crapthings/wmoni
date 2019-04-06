@@ -1,10 +1,10 @@
 {
   "name": "wmoni",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "a free system monitor like istat menu",
   "main": "main.js",
   "build": {
-    "appId": "com.wmoni",
+    "appId": "wmoni",
     "mac": {
       "category": "utils"
     }
@@ -14,7 +14,7 @@
     "dist": "electron-builder"
   },
   "keywords": [],
-  "author": "",
+  "author": "crapthings",
   "license": "ISC",
   "devDependencies": {
     "electron": "^4.1.4",

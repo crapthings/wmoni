@@ -32,7 +32,6 @@ setInterval(function () {
 }, 2000)
 
 ipc.on('pong', function (event, args) {
-  console.log(args)
   svgUpdate([{ count: args.cpu.currentload }, { count: args.cpu.currentload_idle - args.cpu.currentload }])
   trayUpdate('cpu', traySvg, [{ count: args.cpu.currentload }, { count: args.cpu.currentload_idle - args.cpu.currentload }])
   const data = {

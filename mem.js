@@ -35,7 +35,6 @@ setInterval(function () {
 }, 2000)
 
 ipc.on('pong', function (event, args) {
-  console.log(args)
   svgUpdate([{ count: args.mem.active }, { count: args.mem.available }])
 
   trayUpdate('mem', traySvg, [{ count: args.mem.active }, { count: args.mem.available }])
