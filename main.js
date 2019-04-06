@@ -1,15 +1,39 @@
 const { app, BrowserWindow, Tray, nativeImage, ipcMain } = require('electron')
-
 const si = require('systeminformation')
-
 const pretty = require('prettysize')
 
-let mainWindow, cpuTry, memTray, diskTray
+let cpuWindow, memWindow, diskWindow, cpuTray, memTray, diskTray
+
+const singleInstanceLock = app.requestSingleInstanceLock()
+
+if (!singleInstanceLock) {
+  app.quit()
+}
 
 app.dock.hide()
 
-function createWindow () {
-  mainWindow = new BrowserWindow({
+app.on('ready', () => {
+  createDiskWindow()
+  createMemWindow()
+  createCpuWindow()
+  registerIPC()
+})
+
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') app.quit()
+})
+
+app.on('activate', function () {
+  if (cpuWindow === null)
+    createCpuWindow(cpuWindow, cpuTray)
+  if (memWindow === null)
+    createMemWindow(memWindow, memTray)
+  if (diskWindow === null)
+    createDiskWindow(diskWindow, diskTray)
+})
+
+function createCpuWindow() {
+  cpuWindow = new BrowserWindow({
     width: 600 / 3,
     height: 600,
     show: false,
@@ -21,85 +45,128 @@ function createWindow () {
     },
   })
 
-  mainWindow.loadFile('index.html')
+  cpuWindow.loadFile('cpu.html')
 
-  mainWindow.on('closed', function () {
-    mainWindow = null
+  cpuWindow.on('closed', function () {
+    cpuWindow = null
   })
 
-  mainWindow.setResizable(false)
+  cpuWindow.setResizable(false)
 
-  diskTray = new Tray(nativeImage.createFromDataURL(`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAH0lEQVQ4T2NkoBAwUqifYdQAhtEwYBgNA1A+Gvi8AAAmmAARf9qcXAAAAABJRU5ErkJggg==`))
-  memTray = new Tray(nativeImage.createFromDataURL(`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAH0lEQVQ4T2NkoBAwUqifYdQAhtEwYBgNA1A+Gvi8AAAmmAARf9qcXAAAAABJRU5ErkJggg==`))
-  cpuTray = new Tray(nativeImage.createFromDataURL(`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAH0lEQVQ4T2NkoBAwUqifYdQAhtEwYBgNA1A+Gvi8AAAmmAARf9qcXAAAAABJRU5ErkJggg==`))
+  cpuTray = new Tray(nativeImage.createFromDataURL(`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`))
 
-//   cpuTray.on('click', function (event) {
-//     toggleWindow(cpuTray)
-//   })
-//
-//   memTray.on('click', function (event) {
-//     toggleWindow(memTray)
-//   })
-//
-//   diskTray.on('click', function (event) {
-//     toggleWindow(diskTray)
-//   })
+  cpuTray.on('click', function (event) {
+    toggleWindow(cpuWindow, cpuTray)
+    memWindow.hide()
+    diskWindow.hide()
+  })
 }
 
-app.on('ready', createWindow)
+function createMemWindow() {
+  memWindow = new BrowserWindow({
+    width: 600 / 3,
+    height: 600,
+    show: false,
+    transparent: true,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: true,
+      backgroundThrottling: false,
+    },
+  })
 
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin')
-    app.quit()
-})
+  memWindow.loadFile('mem.html')
 
-app.on('activate', function () {
-  if (mainWindow === null)
-    createWindow()
-})
+  memWindow.on('closed', function () {
+    memWindow = null
+  })
 
-const toggleWindow = (tray) => {
-  if (mainWindow.isVisible()) {
-    mainWindow.hide()
-  } else {
-    showWindow(tray)
-  }
+  memWindow.setResizable(false)
+
+  memTray = new Tray(nativeImage.createFromDataURL(`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`))
+
+  memTray.on('click', function (event) {
+    toggleWindow(memWindow, memTray)
+    diskWindow.hide()
+    cpuWindow.hide()
+  })
 }
 
-const showWindow = (tray) => {
-  const position = getWindowPosition(tray)
-  mainWindow.setPosition(position.x, position.y, false)
-  mainWindow.show()
-  mainWindow.focus()
+function createDiskWindow() {
+  diskWindow = new BrowserWindow({
+    width: 600 / 3,
+    height: 600,
+    show: false,
+    transparent: true,
+    frame: false,
+    webPreferences: {
+      nodeIntegration: true,
+      backgroundThrottling: false,
+    },
+  })
+
+  diskWindow.loadFile('disk.html')
+
+  diskWindow.on('closed', function () {
+    diskWindow = null
+  })
+
+  diskWindow.setResizable(false)
+
+  diskTray = new Tray(nativeImage.createFromDataURL(`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=`))
+
+  diskTray.on('click', function (event) {
+    toggleWindow(diskWindow, diskTray)
+    memWindow.hide()
+    cpuWindow.hide()
+  })
 }
 
-const getWindowPosition = (tray) => {
-  const windowBounds = mainWindow.getBounds()
+function getWindowPosition(window, tray) {
+  const windowBounds = window.getBounds()
   const trayBounds = tray.getBounds()
   const x = Math.round(trayBounds.x + (trayBounds.width) - (windowBounds.width))
   const y = Math.round(trayBounds.y + trayBounds.height + 4)
-
   return { x, y }
 }
 
-ipcMain.on('cpu', function (event, args) {
-  cpuTray.setImage(nativeImage.createFromDataURL(args))
-})
+function showWindow (window, tray) {
+  const position = getWindowPosition(window, tray)
+  window.setPosition(position.x, position.y, false)
+  window.show()
+  window.focus()
+}
 
-ipcMain.on('mem', function (event, args) {
-  memTray.setImage(nativeImage.createFromDataURL(args))
-})
+function toggleWindow(window, tray) {
+  if (window.isVisible()) {
+    window.hide()
+  } else {
+    showWindow(window, tray)
+  }
+}
 
-ipcMain.on('disk', function (event, args) {
-  diskTray.setImage(nativeImage.createFromDataURL(args))
-})
+function setTrayImage(tray) {
+  return function (event, dataURL) {
+    tray.setImage(nativeImage.createFromDataURL(dataURL))
+  }
+}
 
-ipcMain.on('ping', async function (event) {
-  const cpu = await si.currentLoad()
-  const mem = await si.mem()
-  const disk = (await si.fsSize())[0]
-  event.sender.send('info', { cpu, disk, mem })
-  cpuTray.setTitle(cpu.currentload.toFixed(1).toString() + '%')
-  memTray.setTitle(pretty(mem.available, true, true, "0"))
-  diskTray.setTitle(pretty(disk.size - disk.used, true, true, "0"))
-})
+function registerIPC() {
+  ipcMain.on('cpu', setTrayImage(cpuTray))
+
+  ipcMain.on('mem', setTrayImage(memTray))
+
+  ipcMain.on('disk', setTrayImage(diskTray))
+
+  ipcMain.on('ping', async function (event) {
+    const cpu = await si.currentLoad()
+    const mem = await si.mem()
+    const disk = (await si.fsSize())[0]
+
+    cpuTray.setTitle(cpu.currentload.toFixed(1).toString() + '%')
+    memTray.setTitle(pretty(mem.available, true, true, "0"))
+    diskTray.setTitle(pretty(disk.size - disk.used, true, true, "0"))
+
+    event.sender.send('pong', { cpu, disk, mem })
+  })
+}
