@@ -33,17 +33,17 @@ function createWindow () {
   memTray = new Tray(nativeImage.createFromDataURL(`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAH0lEQVQ4T2NkoBAwUqifYdQAhtEwYBgNA1A+Gvi8AAAmmAARf9qcXAAAAABJRU5ErkJggg==`))
   cpuTray = new Tray(nativeImage.createFromDataURL(`data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAH0lEQVQ4T2NkoBAwUqifYdQAhtEwYBgNA1A+Gvi8AAAmmAARf9qcXAAAAABJRU5ErkJggg==`))
 
-  cpuTray.on('click', function (event) {
-    toggleWindow(cpuTray)
-  })
-
-  memTray.on('click', function (event) {
-    toggleWindow(memTray)
-  })
-
-  diskTray.on('click', function (event) {
-    toggleWindow(diskTray)
-  })
+//   cpuTray.on('click', function (event) {
+//     toggleWindow(cpuTray)
+//   })
+//
+//   memTray.on('click', function (event) {
+//     toggleWindow(memTray)
+//   })
+//
+//   diskTray.on('click', function (event) {
+//     toggleWindow(diskTray)
+//   })
 }
 
 app.on('ready', createWindow)
